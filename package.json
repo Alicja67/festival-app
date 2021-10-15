@@ -1,0 +1,23 @@
+{
+  "name": "festival-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alicja67/festival-app.git"
+  },
+  "author": "Alicja Latała",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alicja67/festival-app/issues"
+  },
+  "homepage": "https://github.com/Alicja67/festival-app#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "uuid": "^8.3.2"
+  }
+}
