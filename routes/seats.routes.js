@@ -1,45 +1,77 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./../db');
-const { v4: uuidv4 } = require('uuid');
-
-const getElementFromLink = (req) => (
-    db.seats.find(element => element.id === parseInt(req.params.id))
-  );
-
-  router.route('/seats').get((req, res) => {
-    res.json(db.seats);
-  });
+const Seat = require('../models/seats.model');
 
 
-  router.route('/seats/:id').get((req, res) => {
-    res.json(getElementFromLink(req));
-  });
+router.get('/seats', async (req, res) => {
+
+  try {
+    res.json(await Seat.find());
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+});
 
 
-  router.route('/seats').post((req, res) => {
-    const { day, seat, client, email } = req.body;
-    const newElement = { id: uuidv4(), day: day, seat: seat, client: client, email: email };
-    if (db.seats.some(item =>(item.day === day && item.seat ===seat ))){
-      res.status(404).json({ message: 'The slot is already taken...'})
-    } else {
-      db.seats.push(newElement);
-      res.send({ message: 'OK' });
-      req.io.emit('seatsUpdated', db.seats);
+router.get('/seats/:id', async (req, res) => {
+
+  try {
+    const dep = await Seat.findById(req.params.id);
+    if(!dep) res.status(404).json({ message: 'Not found' });
+    else res.json(dep);
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+});
+
+
+router.post('/seats', async (req, res) => {
+
+  try {
+    const { day, seat, email, client } = req.body;
+    const newSeat = new Seat({ day: day, seat: seat, email: email, client: client });
+    await newSeat.save();
+    res.json({ message: 'OK' });
+
+  } catch(err) {
+    res.status(500).json({ message: err });
+  }
+});
+
+
+router.put('/seats/:id', async (req, res) => {
+  const { day, seat, email, client } = req.body;
+
+  try {
+    const dep = await Seat.findById(req.params.id);
+    if(dep) {
+      await Seat.updateOne({ _id: req.params.id }, { $set: { day: day, seat: seat, email: email, client: client  }});
+      res.json({ message: 'OK', dep  });
     }
-  });
+    else res.status(404).json({ message: 'Not found...' });
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+});
 
-  router.route('/seats/:id').put((req, res) => {
-    const { day, seat, client, email } = req.body;
-    const updatedElement = ({ id: req.params.id, day: day, seat: seat, client: client, email: email });
-    db.concerts[db.concerts.indexOf(getElementFromLink(req))] = updatedElement;
-    res.send({ message: 'OK' });
-  });
 
-  router.route('/seats/:id').delete((req, res) => {
-    db.seats.splice(db.seats.indexOf(getElementFromLink(req)), 1);
-    res.send({ message: 'OK' });
-  });
+router.delete('/seats/:id', async (req, res) => {
+
+  try {
+    const dep = await Seat.findById(req.params.id);
+    if(dep) {
+      await Seat.deleteOne({ _id: req.params.id });
+      res.json({ message: 'OK', dep });
+    }
+    else res.status(404).json({ message: 'Not found...' });
+  }
+  catch(err) {
+    res.status(500).json({ message: err });
+  }
+});
 
 
 module.exports = router;
