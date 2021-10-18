@@ -24,7 +24,8 @@ const getElementFromLink = (req) => (
       res.status(404).json({ message: 'The slot is already taken...'})
     } else {
       db.seats.push(newElement);
-      res.send( { message: 'OK' } );
+      res.send({ message: 'OK' });
+      req.io.emit('seatsUpdated', db.seats);
     }
   });
 
@@ -32,12 +33,12 @@ const getElementFromLink = (req) => (
     const { day, seat, client, email } = req.body;
     const updatedElement = ({ id: req.params.id, day: day, seat: seat, client: client, email: email });
     db.concerts[db.concerts.indexOf(getElementFromLink(req))] = updatedElement;
-    res.send( { message: 'OK' } );
+    res.send({ message: 'OK' });
   });
 
   router.route('/seats/:id').delete((req, res) => {
     db.seats.splice(db.seats.indexOf(getElementFromLink(req)), 1);
-    res.send( { message: 'OK' } );
+    res.send({ message: 'OK' });
   });
 
 
