@@ -23,6 +23,6 @@ const items = [
   }
 ];
 
-const PromoCarousel = () => <UncontrolledCarousel className="promoCarousel" items={items} />;
+const PromoCarousel = () => <UncontrolledCarousel className="promoCarousel" items={items} pause={false} />;
 
 export default PromoCarousel;
