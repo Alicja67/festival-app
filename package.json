@@ -4,9 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
-    "build": "cd client && yarn install && yarn build"
+    "build": "cd client && yarn install && yarn build",
+    "test": "set NODE_ENV=test&& mocha \"./{,!(node_modules|client)/**/}*.test.js\" --timeout 10000",
+    "test:watch": "onchange \"./**/*.js\" -i -k -- yarn test"
   },
   "engines": {
     "node": "14.x",
@@ -24,10 +25,14 @@
   },
   "homepage": "https://github.com/Alicja67/festival-app#readme",
   "dependencies": {
+    "chai": "4.2.0",
+    "chai-http": "4.3.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "mocha": "6.2.1",
     "mongoose": "^6.0.11",
     "nodemon": "^2.0.13",
+    "onchange": "^7.1.0",
     "socket.io": "4.2.0",
     "uuid": "^8.3.2"
   }

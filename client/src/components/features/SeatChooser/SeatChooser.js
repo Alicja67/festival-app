@@ -10,7 +10,7 @@ class SeatChooser extends React.Component {
     const { loadSeats, loadSeatsData } = this.props;
     loadSeats();
 
-    this.socket = io.connect('http://localhost:8000/' || process.env.NODE_ENV, {
+    this.socket = io(process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:8000', {
       transports: ['websocket'],
     });
 
@@ -38,17 +38,17 @@ class SeatChooser extends React.Component {
 
     const { prepareSeat } = this;
     const { requests, seats, chosenDay } = this.props;
-    const maxSeats = 50;
+    const maxSeats  = 50;
 
     return (
       <div>
         <h3>Pick a seat</h3>
         <small id="pickHelp" className="form-text text-muted ml-2"><Button color="secondary" /> – seat is already taken</small>
         <small id="pickHelpTwo" className="form-text text-muted ml-2 mb-4"><Button outline color="primary" /> – it's empty</small>
-        { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i+1) )}</div>}
+        { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].success) && <div className="seats">{[...Array(50)].map((x, i) => prepareSeat(i+1) )}</div> }
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].pending) && <Progress animated color="primary" value={50} /> }
         { (requests['LOAD_SEATS'] && requests['LOAD_SEATS'].error) && <Alert color="warning">Couldn't load seats...</Alert> }
-        <p>Free seats: { 50 - seats.filter(item => item.day === chosenDay).length} / {maxSeats} </p>
+        <p>Free seats: { 50 - seats.filter(item => item.day === chosenDay).length } / {maxSeats} </p>
       </div>
     )
   };
